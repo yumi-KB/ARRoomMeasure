@@ -24,33 +24,44 @@ class ViewController: UIViewController {
         sceneView.session.run(configuration)
     }
     
+    @IBAction func UndoAction(_ sender: UIButton) {
+        if dotNodes == [] { return }
+        // sceneViewから削除
+        dotNodes.last?.removeFromParentNode()
+        // 配列から削除
+        dotNodes.removeLast()
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        // ドットを2点打つとリセット
-        if dotNodes.count >= 2 {
-            for dot in dotNodes {
-                dot.removeFromParentNode()
-            }
-            dotNodes = []
+        // ドット上限を20個に指定
+        if dotNodes.count >= 20 {
+            return
         }
         // 最初にタップした座標を取り出す
         guard let touch = touches.first else { return }
         // スクリーン座標に変換する
         let touchLocation = touch.location(in: sceneView)
             // タップされた位置の特徴点にあるARアンカーを探す
-            let hitTestResults = sceneView.hitTest(touchLocation, types: .featurePoint)
+            let hitTestResults = sceneView.hitTest(touchLocation, types: .existingPlane)
             
-            // ARアンカーがあればオブジェクトを置く
-            if let hitResult = hitTestResults.first {
-                addDot(at: hitResult)
+        // ARアンカーがあればオブジェクトを置く
+        if let hitResult = hitTestResults.first {
+            // はじめのオブジェクトは オレンジ色
+            // その他は 白色
+            if dotNodes == [] {
+                addDot(at: hitResult, color: .systemOrange)
+            } else {
+                addDot(at: hitResult, color: .white)
             }
+        }
             
         
     }
-
-    func addDot(at hitResult : ARHitTestResult) {
-        let dotGeometry = SCNSphere(radius: 0.005)
+    
+    func addDot(at hitResult : ARHitTestResult, color: UIColor) {
+        let dotGeometry = SCNSphere(radius: 0.01)
         let material = SCNMaterial()
-        material.diffuse.contents = UIColor.red
+        material.diffuse.contents = color
 
         dotGeometry.materials = [material]
 
@@ -95,9 +106,10 @@ extension ViewController: ARSCNViewDelegate {
         guard let planeAnchor = anchor as? ARPlaneAnchor else {
             fatalError()
         }
+        /*
         // ボールオブジェクトが追加されている場合に、平面は新たに表示しない
         if dotNodes != [] { return }
-        
+        */
         // 平面のインスタンスの生成
         let planeNode = createPlane(withPlaneAnchor: planeAnchor)
         // 小要素に追加
@@ -115,12 +127,14 @@ extension ViewController: ARSCNViewDelegate {
               let planeGeometry = geometryPlaneNode.geometry as? SCNPlane else {
             return
         }
+        /*
         // ボールオブジェクトが追加されている場合に、平面オブジェクトを削除
         if dotNodes != [] {
             // remove node
             node.enumerateChildNodes { (node, stop) in
             node.removeFromParentNode() }
         }
+        */
         // Geometry Update
         planeGeometry.width = CGFloat(planeAnchor.extent.x)
         planeGeometry.height = CGFloat(planeAnchor.extent.z)
@@ -134,8 +148,8 @@ extension ViewController: ARSCNViewDelegate {
         let plane = SCNPlane(
             width: CGFloat(planeAnchor.extent.x),
             height: CGFloat(planeAnchor.extent.z))
-        // オレンジ　透過度０.7
-        plane.materials.first?.diffuse.contents = UIColor.systemOrange.withAlphaComponent(0.7)
+        // 白　透過度0.5
+        plane.materials.first?.diffuse.contents = UIColor.white.withAlphaComponent(0.5)
         let planeNode = SCNNode()
         
         planeNode.geometry = plane
