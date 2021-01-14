@@ -1,74 +1,82 @@
-//
-//  ViewController.swift
-//  ARRoomMeasure
-//
-//  Created by yumi kanebayashi on 2021/01/14.
-//
-
 import UIKit
 import SceneKit
 import ARKit
 
-class ViewController: UIViewController, ARSCNViewDelegate {
-
+class ViewController: UIViewController {
+    
     @IBOutlet var sceneView: ARSCNView!
+    
+    //var dotNodes: [SCNNode] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Set the view's delegate
         sceneView.delegate = self
-        
-        // Show statistics such as fps and timing information
-        sceneView.showsStatistics = true
-        
-        // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
-        
-        // Set the scene to the view
-        sceneView.scene = scene
+        /// 特徴点の追加
+        //sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        // Create a session configuration
+        /// 配置・構成の作成
         let configuration = ARWorldTrackingConfiguration()
-
-        // Run the view's session
+        /// 水平面の検出
+        configuration.planeDetection = .horizontal
+        /// セッションの開始
         sceneView.session.run(configuration)
     }
+}
+
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+    // MARK: - ARSCNViewDelegate
+  
+extension ViewController: ARSCNViewDelegate {
+    
+    // 平面の表示
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        guard let planeAnchor = anchor as? ARPlaneAnchor else {
+            fatalError()
+        }
+        //print("plane detected")
         
-        // Pause the view's session
-        sceneView.session.pause()
+        // 平面のインスタンスの生成
+        let planeNode = createPlane(withPlaneAnchor: planeAnchor)
+        // 小要素に追加
+        node.addChildNode(planeNode)
+        
     }
 
-    // MARK: - ARSCNViewDelegate
-    
-/*
-    // Override to create and configure nodes for anchors added to the view's session.
-    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-        let node = SCNNode()
-     
-        return node
-    }
-*/
-    
-    func session(_ session: ARSession, didFailWithError error: Error) {
-        // Present an error message to the user
+    // 平面の大きさのアップデート
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        guard let planeAnchor = anchor as? ARPlaneAnchor else {
+            fatalError()
+        }
+        guard let geometryPlaneNode = node.childNodes.first,
+              let planeGeometry = geometryPlaneNode.geometry as? SCNPlane else {
+            fatalError()
+        }
+        
+        // Geometry Update
+        planeGeometry.width = CGFloat(planeAnchor.extent.x)
+        planeGeometry.height = CGFloat(planeAnchor.extent.z)
+        geometryPlaneNode.simdPosition = SIMD3(planeAnchor.center.x, 0, planeAnchor.center.z)
         
     }
     
-    func sessionWasInterrupted(_ session: ARSession) {
-        // Inform the user that the session has been interrupted, for example, by presenting an overlay
-        
-    }
-    
-    func sessionInterruptionEnded(_ session: ARSession) {
-        // Reset tracking and/or remove existing anchors if consistent tracking is required
-        
+    // 平面の生成
+    func createPlane(withPlaneAnchor planeAnchor: ARPlaneAnchor) -> SCNNode {
+ 
+        let plane = SCNPlane(
+            width: CGFloat(planeAnchor.extent.x),
+            height: CGFloat(planeAnchor.extent.z))
+        // オレンジ　透過度０.7
+        plane.materials.first?.diffuse.contents = UIColor.systemOrange.withAlphaComponent(0.7)
+        let planeNode = SCNNode()
+
+        planeNode.geometry = plane
+        planeNode.position = SCNVector3(planeAnchor.center.x, 0, planeAnchor.center.z)
+        planeNode.transform = SCNMatrix4MakeRotation(-Float.pi/2, 1, 0, 0)
+
+        return planeNode
     }
 }
