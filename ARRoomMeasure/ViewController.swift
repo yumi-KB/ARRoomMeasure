@@ -8,6 +8,7 @@ class ViewController: UIViewController {
     
     var dotNodes: [SCNNode] = []
     var lineNodes: [SCNNode] = []
+    var lineLength: [Float] = []
     let dotRadius: Float = 0.01
     
     override func viewDidLoad() {
@@ -54,13 +55,17 @@ class ViewController: UIViewController {
                 
                 /* addLine */
                 /// ひとつ前のオブジェクトの座標
-                let fromPosition = dotNodes[dotNodes.count-2].position
+                let fromObject = dotNodes[dotNodes.count-2]
+                let fromPosition = fromObject.position
                 /// 最後に追加したオブジェクトの座標
                 let endPosition = endObject.position
                 // lineノードの作成
                 let lineNode = drawLine(from: fromPosition, to: endPosition)
                 sceneView.scene.rootNode.addChildNode(lineNode)
                 lineNodes.append(lineNode)
+                // lineの長さを配列に格納
+                let length = calculate(start: fromObject, end: endObject)
+                lineLength.append(length)
                 
                 /* もしスタートオブジェクトと重なれば、終了 */
                 if objectsAreTouched(start: startObject, end: endObject) {
