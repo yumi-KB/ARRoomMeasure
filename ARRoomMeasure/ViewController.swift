@@ -8,6 +8,7 @@ class ViewController: UIViewController {
     
     var dotNodes: [SCNNode] = []
     var lineNodes: [SCNNode] = []
+    let dotRadius: Float = 0.01
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,13 +47,26 @@ class ViewController: UIViewController {
             } else {
                 addDot(at: hitResult, color: .white)
                 
+                /// オレンジ色の一番最初のドットオブジェクト
+                let startObject = dotNodes[0]
+                /// 最後に追加したドットオブジェクト
+                let endObject = dotNodes[dotNodes.count-1]
+                
                 /* addLine */
-                let startPosition = dotNodes[dotNodes.count-2].position
-                let endPosition = dotNodes[dotNodes.count-1].position
+                /// ひとつ前のオブジェクトの座標
+                let fromPosition = dotNodes[dotNodes.count-2].position
+                /// 最後に追加したオブジェクトの座標
+                let endPosition = endObject.position
                 // lineノードの作成
-                let lineNode = drawLine(from: startPosition, to: endPosition)
+                let lineNode = drawLine(from: fromPosition, to: endPosition)
                 sceneView.scene.rootNode.addChildNode(lineNode)
                 lineNodes.append(lineNode)
+                
+                /* もしスタートオブジェクトと重なれば、終了 */
+                if objectsAreTouched(start: startObject, end: endObject) {
+                    print("finish")
+                }
+                 
             }
         }
     }
@@ -91,7 +105,7 @@ class ViewController: UIViewController {
     
     private func addDot(at hitResult : ARHitTestResult, color: UIColor) {
         // dotのGeometryを作成
-        let dotGeometry = SCNSphere(radius: 0.01)
+        let dotGeometry = SCNSphere(radius: CGFloat(dotRadius))
         let material = SCNMaterial()
         material.diffuse.contents = color
         
@@ -108,21 +122,31 @@ class ViewController: UIViewController {
         // 配列に追加
         dotNodes.append(dotNode)
         
-        if dotNodes.count >= 2 {
-            calculate()
-        }
+//        if dotNodes.count >= 2 {
+//            calculate()
+//        }
     }
     
-    private func calculate() {
-        let start = dotNodes[0]
-        let end = dotNodes[1]
-        
+    private func calculate(start: SCNNode, end: SCNNode) -> Float {
+//        let start = dotNodes[0]
+//        let end = dotNodes[1]
+
         let distance = sqrt(
             pow(end.position.x - start.position.x, 2) +
                 pow(end.position.y - start.position.y, 2) +
                 pow(end.position.z - start.position.z, 2)
         )
         //        distance = √ ((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2)
+        return distance
+    }
+    
+    private func objectsAreTouched(start: SCNNode, end: SCNNode) -> Bool {
+        let distance = calculate(start: start, end: end)
+        // 2点間の距離が(直径*1.2）以下になったら
+        if distance <= (dotRadius*2)*1.2 {
+            return true
+        }
+        return false
     }
 }
 
