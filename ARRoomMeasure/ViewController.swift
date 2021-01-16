@@ -6,10 +6,12 @@ class ViewController: UIViewController {
     
     @IBOutlet var sceneView: ARSCNView!
     
+    let dotRadius: Float = 0.01
     var dotNodes: [SCNNode] = []
     var lineNodes: [SCNNode] = []
     var lineLength: [Float] = []
-    let dotRadius: Float = 0.01
+    var firstY: Float = 0
+    var plotArray: [[Float]] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,9 +46,18 @@ class ViewController: UIViewController {
             // スタート地点のオブジェクトは オレンジ色
             // その他は 白色
             if dotNodes == [] {
-                addDot(at: hitResult, color: .systemOrange)
+                firstY = hitResult.worldTransform.columns.3.y
+                addDot(at: hitResult, color: .systemOrange, y: firstY)
+                
+                let x = dotNodes[dotNodes.count-1].position.x
+                let z = dotNodes[dotNodes.count-1].position.z
+                plotArray.append([x,z])
             } else {
-                addDot(at: hitResult, color: .white)
+                addDot(at: hitResult, color: .white, y: firstY)
+                
+                let x = dotNodes[dotNodes.count-1].position.x
+                let z = dotNodes[dotNodes.count-1].position.z
+                plotArray.append([x,z])
                 
                 /// オレンジ色の一番最初のドットオブジェクト
                 let startObject = dotNodes[0]
@@ -64,12 +75,19 @@ class ViewController: UIViewController {
                 sceneView.scene.rootNode.addChildNode(lineNode)
                 lineNodes.append(lineNode)
                 // lineの長さを配列に格納
-                let length = calculate(start: fromObject, end: endObject)
+                let length = calculateDistance(from: fromObject, to: endObject)
                 lineLength.append(length)
                 
                 /* もしスタートオブジェクトと重なれば、終了 */
                 if objectsAreTouched(start: startObject, end: endObject) {
+                    // 最後のlineのエンドオブジェクトをスタートオブジェクトに置き換えて更新
+                    let updateLastLength = calculateDistance(from: fromObject, to: startObject)
+                    lineLength[lineLength.count-1] = updateLastLength
+                    
                     print("finish")
+                    /// 画面遷移時に使用するプロパティ
+                    ///
+                    performSegue(withIdentifier: "RoomPopup", sender: self)
                 }
                  
             }
@@ -108,7 +126,7 @@ class ViewController: UIViewController {
         return node
     }
     
-    private func addDot(at hitResult : ARHitTestResult, color: UIColor) {
+    private func addDot(at hitResult : ARHitTestResult, color: UIColor, y: Float) {
         // dotのGeometryを作成
         let dotGeometry = SCNSphere(radius: CGFloat(dotRadius))
         let material = SCNMaterial()
@@ -120,7 +138,7 @@ class ViewController: UIViewController {
         // 座標の指定
         dotNode.position = SCNVector3(
             hitResult.worldTransform.columns.3.x,
-            hitResult.worldTransform.columns.3.y,
+            y,//hitResult.worldTransform.columns.3.y,
             hitResult.worldTransform.columns.3.z)
         // 子ノードを追加
         sceneView.scene.rootNode.addChildNode(dotNode)
@@ -132,27 +150,30 @@ class ViewController: UIViewController {
 //        }
     }
     
-    private func calculate(start: SCNNode, end: SCNNode) -> Float {
+    private func calculateDistance(from: SCNNode, to: SCNNode) -> Float {
 //        let start = dotNodes[0]
 //        let end = dotNodes[1]
 
         let distance = sqrt(
-            pow(end.position.x - start.position.x, 2) +
-                pow(end.position.y - start.position.y, 2) +
-                pow(end.position.z - start.position.z, 2)
+            pow(to.position.x - from.position.x, 2) +
+                pow(to.position.y - from.position.y, 2) +
+                pow(to.position.z - from.position.z, 2)
         )
         //        distance = √ ((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2)
         return distance
     }
     
     private func objectsAreTouched(start: SCNNode, end: SCNNode) -> Bool {
-        let distance = calculate(start: start, end: end)
+        let distance = calculateDistance(from: start, to: end)
         // 2点間の距離が(直径*1.2）以下になったら
         if distance <= (dotRadius*2)*1.2 {
             return true
         }
         return false
     }
+    
+
+    
 }
 
 

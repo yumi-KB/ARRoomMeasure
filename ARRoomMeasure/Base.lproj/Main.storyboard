@@ -13,14 +13,14 @@
             <objects>
                 <viewController id="BV1-FR-VrT" customClass="ViewController" customModule="ARRoomMeasure" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="U0K-SW-4ec">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BrB-h1-WRS">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="862"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
                             </arscnView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="0a7-lm-X9c">
-                                <rect key="frame" x="172" y="54" width="70" height="70"/>
+                                <rect key="frame" x="172" y="10" width="70" height="70"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aOo-W7-BFp">
                                         <rect key="frame" x="0.0" y="-1.5" width="70" height="71"/>
@@ -48,19 +48,65 @@
                             <constraint firstItem="0a7-lm-X9c" firstAttribute="top" secondItem="fQZ-KI-GVf" secondAttribute="top" constant="10" id="ywa-vd-2e1"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="J88-b0-TWG"/>
                     <connections>
                         <outlet property="sceneView" destination="BrB-h1-WRS" id="5nT-qQ-ynl"/>
+                        <segue destination="tAt-Pk-Ybs" kind="show" identifier="RoomPopup" id="tIF-Qx-VQH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-196" y="55"/>
         </scene>
+        <!--Room Image View Controller-->
+        <scene sceneID="Utb-Nh-x49">
+            <objects>
+                <viewController id="tAt-Pk-Ybs" customClass="RoomImageViewController" customModule="ARRoomMeasure" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="o8a-sK-3Yq">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CjQ-7k-0xa">
+                                <rect key="frame" x="15" y="17" width="50" height="45.5"/>
+                                <color key="backgroundColor" systemColor="systemGray2Color"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="UQM-86-0qS"/>
+                                    <constraint firstAttribute="width" constant="50" id="deG-1b-ZKF"/>
+                                </constraints>
+                                <color key="tintColor" systemColor="systemBackgroundColor"/>
+                                <state key="normal" backgroundImage="xmark" catalog="system">
+                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
+                                </state>
+                                <connections>
+                                    <action selector="PopupClosed:" destination="tAt-Pk-Ybs" eventType="touchUpInside" id="1Tf-NT-SrJ"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Op8-wF-Z4V"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="CjQ-7k-0xa" firstAttribute="leading" secondItem="Op8-wF-Z4V" secondAttribute="leading" constant="15" id="DfH-6G-WPg"/>
+                            <constraint firstItem="CjQ-7k-0xa" firstAttribute="top" secondItem="Op8-wF-Z4V" secondAttribute="top" constant="15" id="Qca-e7-Fqb"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="qZe-lv-vUD"/>
+                    <connections>
+                        <segue destination="BV1-FR-VrT" kind="show" identifier="ClosePopup" id="9Y5-Mz-D39"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Qi3-zf-zV6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="800" y="55"/>
+        </scene>
     </scenes>
     <resources>
         <image name="gobackward" catalog="system" width="121" height="128"/>
+        <image name="xmark" catalog="system" width="128" height="113"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGray2Color">
+            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
