@@ -14,6 +14,7 @@
 		4B1C919B25AFE6370088F423 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B1C919A25AFE6370088F423 /* Assets.xcassets */; };
 		4B1C919E25AFE6370088F423 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B1C919C25AFE6370088F423 /* LaunchScreen.storyboard */; };
 		4B1C91AE25B2D0490088F423 /* RoomImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C91AD25B2D0480088F423 /* RoomImageViewController.swift */; };
+		4B1C91B825B3D8360088F423 /* DrawRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C91B725B3D8360088F423 /* DrawRoom.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		4B1C919D25AFE6370088F423 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4B1C919F25AFE6370088F423 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B1C91AD25B2D0480088F423 /* RoomImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomImageViewController.swift; sourceTree = "<group>"; };
+		4B1C91B725B3D8360088F423 /* DrawRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawRoom.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 				4B1C919525AFE6340088F423 /* ViewController.swift */,
 				4B1C919725AFE6340088F423 /* Main.storyboard */,
 				4B1C91AD25B2D0480088F423 /* RoomImageViewController.swift */,
+				4B1C91B725B3D8360088F423 /* DrawRoom.swift */,
 				4B1C919A25AFE6370088F423 /* Assets.xcassets */,
 				4B1C919C25AFE6370088F423 /* LaunchScreen.storyboard */,
 				4B1C919F25AFE6370088F423 /* Info.plist */,
@@ -141,6 +144,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B1C91B825B3D8360088F423 /* DrawRoom.swift in Sources */,
 				4B1C919625AFE6340088F423 /* ViewController.swift in Sources */,
 				4B1C91AE25B2D0490088F423 /* RoomImageViewController.swift in Sources */,
 				4B1C919225AFE6340088F423 /* AppDelegate.swift in Sources */,

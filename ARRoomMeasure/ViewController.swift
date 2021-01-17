@@ -7,6 +7,7 @@ class ViewController: UIViewController {
     @IBOutlet var sceneView: ARSCNView!
     
     let dotRadius: Float = 0.01
+    var textNode = SCNNode()
     var dotNodes: [SCNNode] = []
     var lineNodes: [SCNNode] = []
     var lineLength: [Float] = []
@@ -46,15 +47,20 @@ class ViewController: UIViewController {
             // スタート地点のオブジェクトは オレンジ色
             // その他は 白色
             if dotNodes == [] {
+                /// スタート地点のy座標を保存
                 firstY = hitResult.worldTransform.columns.3.y
+                /// ドットの追加
                 addDot(at: hitResult, color: .systemOrange, y: firstY)
                 
+                /// 2次元座標の追加
                 let x = dotNodes[dotNodes.count-1].position.x
                 let z = dotNodes[dotNodes.count-1].position.z
                 plotArray.append([x,z])
             } else {
+                /// ドットの追加
                 addDot(at: hitResult, color: .white, y: firstY)
                 
+                /// 2次元座標の生成
                 let x = dotNodes[dotNodes.count-1].position.x
                 let z = dotNodes[dotNodes.count-1].position.z
                 plotArray.append([x,z])
@@ -78,15 +84,19 @@ class ViewController: UIViewController {
                 let length = calculateDistance(from: fromObject, to: endObject)
                 lineLength.append(length)
                 
+                // textで距離を表示
+                updateText(text: "\(floor(abs(length)*1000)/1000)m", atPosition: fromPosition)
+                
                 /* もしスタートオブジェクトと重なれば、終了 */
                 if objectsAreTouched(start: startObject, end: endObject) {
                     // 最後のlineのエンドオブジェクトをスタートオブジェクトに置き換えて更新
                     let updateLastLength = calculateDistance(from: fromObject, to: startObject)
                     lineLength[lineLength.count-1] = updateLastLength
+                    // 2次元座標 最後のオブジェクト座標をスタートオブジェクトとの座標に置き換えて更新
+                    plotArray[plotArray.count-1][0] = plotArray[0][0]
+                    plotArray[plotArray.count-1][1] = plotArray[0][1]
                     
                     print("finish")
-                    /// 画面遷移時に使用するプロパティ
-                    ///
                     performSegue(withIdentifier: "RoomPopup", sender: self)
                 }
                  
@@ -172,7 +182,12 @@ class ViewController: UIViewController {
         return false
     }
     
-
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+         if segue.identifier == "RoomPopup" {
+             let roomImageViewController = segue.destination as! RoomImageViewController
+             roomImageViewController.plotArray = plotArray
+         }
+     }
     
 }
 
@@ -238,5 +253,23 @@ extension ViewController: ARSCNViewDelegate {
         planeNode.transform = SCNMatrix4MakeRotation(-Float.pi/2, 1, 0, 0)
         
         return planeNode
+    }
+    
+    func updateText(text: String, atPosition position: SCNVector3){
+        
+        textNode.removeFromParentNode()
+        
+        let textGeometry = SCNText(string: text, extrusionDepth: 1.0)
+        
+        textGeometry.firstMaterial?.diffuse.contents = UIColor.red
+        
+        textNode = SCNNode(geometry: textGeometry)
+        
+        textNode.position = SCNVector3(position.x, position.y + 0.01, position.z)
+        
+        textNode.scale = SCNVector3(0.01, 0.01, 0.01)
+        
+        sceneView.scene.rootNode.addChildNode(textNode)
+        
     }
 }

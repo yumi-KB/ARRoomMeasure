@@ -13,14 +13,14 @@
             <objects>
                 <viewController id="BV1-FR-VrT" customClass="ViewController" customModule="ARRoomMeasure" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="U0K-SW-4ec">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BrB-h1-WRS">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="862"/>
                             </arscnView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="0a7-lm-X9c">
-                                <rect key="frame" x="172" y="10" width="70" height="70"/>
+                                <rect key="frame" x="172" y="54" width="70" height="70"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aOo-W7-BFp">
                                         <rect key="frame" x="0.0" y="-1.5" width="70" height="71"/>
@@ -51,7 +51,7 @@
                     <navigationItem key="navigationItem" id="J88-b0-TWG"/>
                     <connections>
                         <outlet property="sceneView" destination="BrB-h1-WRS" id="5nT-qQ-ynl"/>
-                        <segue destination="tAt-Pk-Ybs" kind="show" identifier="RoomPopup" id="tIF-Qx-VQH"/>
+                        <segue destination="tAt-Pk-Ybs" kind="presentation" identifier="RoomPopup" id="tIF-Qx-VQH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
@@ -90,9 +90,6 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="qZe-lv-vUD"/>
-                    <connections>
-                        <segue destination="BV1-FR-VrT" kind="show" identifier="ClosePopup" id="9Y5-Mz-D39"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Qi3-zf-zV6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

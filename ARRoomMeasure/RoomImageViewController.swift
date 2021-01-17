@@ -16,20 +16,13 @@ class RoomImageViewController: UIViewController {
         
         print("Modal done!")
         print(plotArray)
+        
+        let drawRoom = DrawRoom(frame: self.view.bounds)
+        drawRoom.setArray(plotArray)
+        self.view.addSubview(drawRoom)
     }
     
     @IBAction func PopupClosed(_ sender: UIButton) {
         self.dismiss(animated: true, completion: nil)
     }
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
