@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DrawRoom: UIView {
+final class DrawRoom: UIView {
     
     var plotArray: [[Float]] = [[100,100],[200,200],[300,300]]
     
@@ -26,24 +26,16 @@ class DrawRoom: UIView {
     }
     
     override func draw(_ rect: CGRect) {
-        // 線
+        // 図形描画用の線
         let line = UIBezierPath()
-//
-//        // 最初の位置
-//        line.move(to: CGPoint(x: 100, y: 100))
-//        // 次の位置
-//        line.addLine(to:CGPoint(x: 300, y: 150))
         
-        
+        // スタート位置
         line.move(to: CGPoint(x: 0, y: 0))
-//        let minX = plotArray.min
-//        let minY
+        
         for i in 1 ..< plotArray.count {
             let x = CGFloat((plotArray[i][0] - plotArray[0][0]) * 5000)
             let y = CGFloat((plotArray[i][1] - plotArray[0][1]) * 5000)
-            print(x)
-            print(y)
-            //line.move(to: CGPoint(x: x, y: y))
+            print("x:\(x), y:\(y)")
             line.addLine(to: CGPoint(x: x, y: y))
         }
         

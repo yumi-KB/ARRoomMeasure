@@ -2,7 +2,7 @@ import UIKit
 import SceneKit
 import ARKit
 
-class ViewController: UIViewController {
+final class ViewController: UIViewController {
     
     @IBOutlet var sceneView: ARSCNView!
     
@@ -32,9 +32,7 @@ class ViewController: UIViewController {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // ドット上限を20個に指定
-        if dotNodes.count >= 20 {
-            return
-        }
+        if dotNodes.count >= 20 { return }
         // 最初にタップした座標を取り出す
         guard let touch = touches.first else { return }
         // スクリーン座標に変換する
@@ -43,63 +41,59 @@ class ViewController: UIViewController {
         let hitTestResults = sceneView.hitTest(touchLocation, types: .existingPlane)
         
         // ARアンカーがあればオブジェクトを置く
-        if let hitResult = hitTestResults.first {
-            // スタート地点のオブジェクトは オレンジ色
-            // その他は 白色
-            if dotNodes == [] {
-                /// スタート地点のy座標を保存
-                firstY = hitResult.worldTransform.columns.3.y
-                /// ドットの追加
-                addDot(at: hitResult, color: .systemOrange, y: firstY)
+        guard let hitResult = hitTestResults.first else { return }
+        // スタート地点のオブジェクトは オレンジ色
+        // その他は 白色
+        if dotNodes == [] {
+            /// スタート地点のy座標を保存
+            /// 今後この座標上の平面を基準にドットを追加していく
+            firstY = hitResult.worldTransform.columns.3.y
+            /// ドットの追加
+            addDot(at: hitResult, color: .systemOrange, y: firstY)
+            
+            /// 2次元座標の追加
+            let x = dotNodes[dotNodes.count-1].position.x
+            let z = dotNodes[dotNodes.count-1].position.z
+            plotArray.append([x,z])
+        } else {
+            /// ドットの追加
+            addDot(at: hitResult, color: .white, y: firstY)
+            
+            /// 2次元座標の生成
+            let x = dotNodes[dotNodes.count-1].position.x
+            let z = dotNodes[dotNodes.count-1].position.z
+            plotArray.append([x,z])
+            
+            /// オレンジ色の一番最初のドットオブジェクト
+            let startObject = dotNodes[0]
+            /// 最後に追加したドットオブジェクト
+            let endObject = dotNodes[dotNodes.count-1]
+            /// ひとつ前のオブジェクトの座標
+            let fromObject = dotNodes[dotNodes.count-2]
+            
+            // ラインの追加
+            addLine(from: fromObject, to: endObject)
+            
+            // lineの長さを配列に格納
+            let length = calculateDistance(from: fromObject, to: endObject)
+            lineLength.append(length)
+            
+            // 距離文字列の追加
+            let distance = floor(abs(length)*1000)/1000
+            addDistance(text: "\(distance)m", from: fromObject, to: endObject)
+            
+            /* もしスタートオブジェクトと重なれば、終了 */
+            if objectsAreTouched(start: startObject, end: endObject) {
+                // 最後のlineのエンドオブジェクトをスタートオブジェクトに置き換えて更新
+                let updateLastLength = calculateDistance(from: fromObject, to: startObject)
+                lineLength[lineLength.count-1] = updateLastLength
+                // 2次元座標 最後のオブジェクト座標をスタートオブジェクトとの座標に置き換えて更新
+                plotArray[plotArray.count-1][0] = plotArray[0][0]
+                plotArray[plotArray.count-1][1] = plotArray[0][1]
                 
-                /// 2次元座標の追加
-                let x = dotNodes[dotNodes.count-1].position.x
-                let z = dotNodes[dotNodes.count-1].position.z
-                plotArray.append([x,z])
-            } else {
-                /// ドットの追加
-                addDot(at: hitResult, color: .white, y: firstY)
-                
-                /// 2次元座標の生成
-                let x = dotNodes[dotNodes.count-1].position.x
-                let z = dotNodes[dotNodes.count-1].position.z
-                plotArray.append([x,z])
-                
-                /// オレンジ色の一番最初のドットオブジェクト
-                let startObject = dotNodes[0]
-                /// 最後に追加したドットオブジェクト
-                let endObject = dotNodes[dotNodes.count-1]
-                
-                /* addLine */
-                /// ひとつ前のオブジェクトの座標
-                let fromObject = dotNodes[dotNodes.count-2]
-                let fromPosition = fromObject.position
-                /// 最後に追加したオブジェクトの座標
-                let endPosition = endObject.position
-                // lineノードの作成
-                let lineNode = drawLine(from: fromPosition, to: endPosition)
-                sceneView.scene.rootNode.addChildNode(lineNode)
-                lineNodes.append(lineNode)
-                // lineの長さを配列に格納
-                let length = calculateDistance(from: fromObject, to: endObject)
-                lineLength.append(length)
-                
-                // textで距離を表示
-                updateText(text: "\(floor(abs(length)*1000)/1000)m", from: fromPosition, to: endPosition)
-                
-                /* もしスタートオブジェクトと重なれば、終了 */
-                if objectsAreTouched(start: startObject, end: endObject) {
-                    // 最後のlineのエンドオブジェクトをスタートオブジェクトに置き換えて更新
-                    let updateLastLength = calculateDistance(from: fromObject, to: startObject)
-                    lineLength[lineLength.count-1] = updateLastLength
-                    // 2次元座標 最後のオブジェクト座標をスタートオブジェクトとの座標に置き換えて更新
-                    plotArray[plotArray.count-1][0] = plotArray[0][0]
-                    plotArray[plotArray.count-1][1] = plotArray[0][1]
-                    
-                    print("finish")
-                    performSegue(withIdentifier: "RoomPopup", sender: self)
-                }
-                 
+                print("finish")
+                // モーダルで画面遷移
+                performSegue(withIdentifier: "RoomPopup", sender: self)
             }
         }
     }
@@ -125,6 +119,13 @@ class ViewController: UIViewController {
         textNodes.last?.removeFromParentNode()
         // 配列から削除
         textNodes.removeLast()
+    }
+    
+    private func addLine(from: SCNNode, to: SCNNode) {
+        // lineノードの作成
+        let lineNode = drawLine(from: from.position, to: to.position)
+        sceneView.scene.rootNode.addChildNode(lineNode)
+        lineNodes.append(lineNode)
     }
     
     private func drawLine(from: SCNVector3, to: SCNVector3) -> SCNNode {
@@ -155,31 +156,24 @@ class ViewController: UIViewController {
         // 座標の指定
         dotNode.position = SCNVector3(
             hitResult.worldTransform.columns.3.x,
-            y,//hitResult.worldTransform.columns.3.y,
+            y,
             hitResult.worldTransform.columns.3.z)
         // 子ノードを追加
         sceneView.scene.rootNode.addChildNode(dotNode)
         // 配列に追加
         dotNodes.append(dotNode)
-        
-//        if dotNodes.count >= 2 {
-//            calculate()
-//        }
     }
     
-    func updateText(text: String, from: SCNVector3, to: SCNVector3){
-        
-        //textNode.removeFromParentNode()
-        
+    private func addDistance(text: String, from: SCNNode, to: SCNNode){
         // textGeometryの生成
         let textGeometry = SCNText(string: text, extrusionDepth: 1.0)
         textGeometry.firstMaterial?.diffuse.contents = UIColor.red
         let textNode = SCNNode(geometry: textGeometry)
         
         // fromとtoの座標の中央値を計算
-        let x = (from.x + to.x) / 2.0
-        let y = (from.y + to.y) / 2.0 + 0.01
-        let z = (from.z + to.z) / 2.0
+        let x = (from.position.x + to.position.x) / 2.0
+        let y = (from.position.y + to.position.y) / 2.0 + 0.01
+        let z = (from.position.z + to.position.z) / 2.0
         textNode.position = SCNVector3(x, y, z)
         
         // scaleの設定
@@ -193,9 +187,6 @@ class ViewController: UIViewController {
     }
     
     private func calculateDistance(from: SCNNode, to: SCNNode) -> Float {
-//        let start = dotNodes[0]
-//        let end = dotNodes[1]
-
         let distance = sqrt(
             pow(to.position.x - from.position.x, 2) +
                 pow(to.position.y - from.position.y, 2) +
@@ -215,11 +206,11 @@ class ViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-         if segue.identifier == "RoomPopup" {
-             let roomImageViewController = segue.destination as! RoomImageViewController
-             roomImageViewController.plotArray = plotArray
-         }
-     }
+        if segue.identifier == "RoomPopup" {
+            let roomImageViewController = segue.destination as! RoomImageViewController
+            roomImageViewController.plotArray = plotArray
+        }
+    }
     
 }
 
@@ -286,5 +277,5 @@ extension ViewController: ARSCNViewDelegate {
         
         return planeNode
     }
-
+    
 }

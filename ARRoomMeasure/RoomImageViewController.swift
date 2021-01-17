@@ -7,7 +7,7 @@
 
 import UIKit
 
-class RoomImageViewController: UIViewController {
+final class RoomImageViewController: UIViewController {
     
     var plotArray: [[Float]] = []
 
