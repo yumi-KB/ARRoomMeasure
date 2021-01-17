@@ -7,7 +7,7 @@ class ViewController: UIViewController {
     @IBOutlet var sceneView: ARSCNView!
     
     let dotRadius: Float = 0.01
-    var textNode = SCNNode()
+    var textNodes: [SCNNode] = []
     var dotNodes: [SCNNode] = []
     var lineNodes: [SCNNode] = []
     var lineLength: [Float] = []
@@ -85,7 +85,7 @@ class ViewController: UIViewController {
                 lineLength.append(length)
                 
                 // textで距離を表示
-                updateText(text: "\(floor(abs(length)*1000)/1000)m", atPosition: fromPosition)
+                updateText(text: "\(floor(abs(length)*1000)/1000)m", from: fromPosition, to: endPosition)
                 
                 /* もしスタートオブジェクトと重なれば、終了 */
                 if objectsAreTouched(start: startObject, end: endObject) {
@@ -118,6 +118,13 @@ class ViewController: UIViewController {
         lineNodes.last?.removeFromParentNode()
         // 配列から削除
         lineNodes.removeLast()
+        
+        /* remove text */
+        if textNodes == [] { return }
+        // sceneViewから削除
+        textNodes.last?.removeFromParentNode()
+        // 配列から削除
+        textNodes.removeLast()
     }
     
     private func drawLine(from: SCNVector3, to: SCNVector3) -> SCNNode {
@@ -158,6 +165,31 @@ class ViewController: UIViewController {
 //        if dotNodes.count >= 2 {
 //            calculate()
 //        }
+    }
+    
+    func updateText(text: String, from: SCNVector3, to: SCNVector3){
+        
+        //textNode.removeFromParentNode()
+        
+        // textGeometryの生成
+        let textGeometry = SCNText(string: text, extrusionDepth: 1.0)
+        textGeometry.firstMaterial?.diffuse.contents = UIColor.red
+        let textNode = SCNNode(geometry: textGeometry)
+        
+        // fromとtoの座標の中央値を計算
+        let x = (from.x + to.x) / 2.0
+        let y = (from.y + to.y) / 2.0 + 0.01
+        let z = (from.z + to.z) / 2.0
+        textNode.position = SCNVector3(x, y, z)
+        
+        // scaleの設定
+        let size = 0.001
+        textNode.scale = SCNVector3(size, size, size)
+        
+        // 子ノードを追加
+        sceneView.scene.rootNode.addChildNode(textNode)
+        // 配列に追加
+        textNodes.append(textNode)
     }
     
     private func calculateDistance(from: SCNNode, to: SCNNode) -> Float {
@@ -254,22 +286,5 @@ extension ViewController: ARSCNViewDelegate {
         
         return planeNode
     }
-    
-    func updateText(text: String, atPosition position: SCNVector3){
-        
-        textNode.removeFromParentNode()
-        
-        let textGeometry = SCNText(string: text, extrusionDepth: 1.0)
-        
-        textGeometry.firstMaterial?.diffuse.contents = UIColor.red
-        
-        textNode = SCNNode(geometry: textGeometry)
-        
-        textNode.position = SCNVector3(position.x, position.y + 0.01, position.z)
-        
-        textNode.scale = SCNVector3(0.01, 0.01, 0.01)
-        
-        sceneView.scene.rootNode.addChildNode(textNode)
-        
-    }
+
 }
