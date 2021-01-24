@@ -5,11 +5,16 @@ import ARKit
 final class ViewController: UIViewController {
     
     @IBOutlet var sceneView: ARSCNView!
+    var coverView: UIView!
     
     let dotRadius: Float = 0.01
+    /// 距離ノード
     var textNodes: [SCNNode] = []
+    /// ドットノード
     var dotNodes: [SCNNode] = []
+    /// 線ノード
     var lineNodes: [SCNNode] = []
+    
     var lineLength: [Float] = []
     var firstY: Float = 0
     var plotArray: [[Float]] = []
@@ -99,6 +104,15 @@ final class ViewController: UIViewController {
     }
     
     @IBAction private func UndoAction(_ sender: UIButton) {
+        /* remove plot */
+        if plotArray == [] {
+            if plotArray.count > 0 {
+                plotArray[0] = [0.0, 0.0]
+            }
+            return
+        }
+        plotArray.remove(at: plotArray.count-1)
+        
         /* remove dot */
         if dotNodes == [] { return }
         // sceneViewから削除
