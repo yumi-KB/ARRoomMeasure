@@ -18,6 +18,7 @@ final class ViewController: UIViewController {
     var lineLength: [Float] = []
     var firstY: Float = 0
     var plotArray: [[Float]] = []
+    var distanceArray: [Float] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -84,17 +85,18 @@ final class ViewController: UIViewController {
             lineLength.append(length)
             
             // 距離文字列の追加
+            // distance メートル
             let distance = floor(abs(length)*1000)/1000
             addDistance(text: "\(distance)m", from: fromObject, to: endObject)
+            distanceArray.append(distance)
             
             /* もしスタートオブジェクトと重なれば、終了 */
             if objectsAreTouched(start: startObject, end: endObject) {
                 // 最後のlineのエンドオブジェクトをスタートオブジェクトに置き換えて更新
                 let updateLastLength = calculateDistance(from: fromObject, to: startObject)
                 lineLength[lineLength.count-1] = updateLastLength
-                // 2次元座標 最後のオブジェクト座標をスタートオブジェクトとの座標に置き換えて更新
-                plotArray[plotArray.count-1][0] = plotArray[0][0]
-                plotArray[plotArray.count-1][1] = plotArray[0][1]
+                // 重なった配列末尾を削除
+                plotArray.removeLast()
                 
                 print("finish")
                 // モーダルで画面遷移
@@ -103,15 +105,14 @@ final class ViewController: UIViewController {
         }
     }
     
+    // MARK: - Action
     @IBAction private func UndoAction(_ sender: UIButton) {
         /* remove plot */
         if plotArray == [] {
-            if plotArray.count > 0 {
-                plotArray[0] = [0.0, 0.0]
-            }
-            return
+            if plotArray.count > 0 { plotArray[0] = [0.0, 0.0] }
+        } else {
+            plotArray.remove(at: plotArray.count-1)
         }
-        plotArray.remove(at: plotArray.count-1)
         
         /* remove dot */
         if dotNodes == [] { return }
@@ -133,8 +134,11 @@ final class ViewController: UIViewController {
         textNodes.last?.removeFromParentNode()
         // 配列から削除
         textNodes.removeLast()
+        distanceArray.removeLast()
     }
     
+    
+    // MARK: - Methods
     private func addLine(from: SCNNode, to: SCNNode) {
         // lineノードの作成
         let lineNode = drawLine(from: from.position, to: to.position)
@@ -219,10 +223,12 @@ final class ViewController: UIViewController {
         return false
     }
     
+    // MARK: - Prepare method
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "RoomPopup" {
             let roomImageViewController = segue.destination as! RoomImageViewController
             roomImageViewController.plotArray = plotArray
+            roomImageViewController.distanceArray = distanceArray
         }
     }
     

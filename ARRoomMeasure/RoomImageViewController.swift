@@ -10,6 +10,8 @@ import UIKit
 final class RoomImageViewController: UIViewController {
     
     var plotArray: [[Float]] = []
+    var distanceArray: [Float] = []
+    
     var constraint = 15.0
     var buttonSize = 50.0
     
@@ -28,11 +30,14 @@ final class RoomImageViewController: UIViewController {
         
         let drawRoom = DrawRoom(frame: CGRect(x: CGFloat(constraint), y: CGFloat(constraint+(constraint+buttonSize)),
                                               width: viewWidth, height: viewHeight))
-        drawRoom.setArray(plotArray)
+        drawRoom.setPlotArray(plotArray)
+        drawRoom.setDistanceArray(distanceArray)
         
         self.view.addSubview(drawRoom)
     }
     
+    
+    // MARK: - Action
     @IBAction func PopupClosed(_ sender: UIButton) {
         self.dismiss(animated: true, completion: nil)
     }
