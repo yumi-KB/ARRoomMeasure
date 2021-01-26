@@ -2,22 +2,26 @@ import UIKit
 import SceneKit
 import ARKit
 
-final class ViewController: UIViewController {
+final class ARViewController: UIViewController {
     
+    /// ARを表示するビュー
     @IBOutlet var sceneView: ARSCNView!
-    var coverView: UIView!
     
-    let dotRadius: Float = 0.01
-    /// 距離ノード
-    var textNodes: [SCNNode] = []
+    var coverView: UIView!
+    /// ドット半径
+    let dotRadius: Float = 0.02
     /// ドットノード
     var dotNodes: [SCNNode] = []
     /// 線ノード
     var lineNodes: [SCNNode] = []
+    /// 距離表示用ノード
+    var textNodes: [SCNNode] = []
     
-    var lineLength: [Float] = []
+    /// 最初においたオブジェクトのy座標を記録
     var firstY: Float = 0
+    /// オブジェクトの2次元座票を記録
     var plotArray: [[Float]] = []
+    /// オブジェクト間の測定した距離を記録
     var distanceArray: [Float] = []
     
     override func viewDidLoad() {
@@ -28,11 +32,11 @@ final class ViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        /// 配置・構成の作成
+        // 配置・構成の作成
         let configuration = ARWorldTrackingConfiguration()
-        /// 水平面の検出
+        // 水平面の検出
         configuration.planeDetection = .horizontal
-        /// セッションの開始
+        // セッションの開始
         sceneView.session.run(configuration)
     }
     
@@ -45,60 +49,54 @@ final class ViewController: UIViewController {
         let touchLocation = touch.location(in: sceneView)
         // タップされた位置の特徴点にあるARアンカーを探す
         let hitTestResults = sceneView.hitTest(touchLocation, types: .existingPlane)
-        
         // ARアンカーがあればオブジェクトを置く
         guard let hitResult = hitTestResults.first else { return }
-        // スタート地点のオブジェクトは オレンジ色
-        // その他は 白色
+        
+        // スタート地点のオブジェクトは オレンジ色/その他は 白色で配置
         if dotNodes == [] {
-            /// スタート地点のy座標を保存
-            /// 今後この座標上の平面を基準にドットを追加していく
+            // スタート地点のy座標を保存
+            // 今後この座標上の平面を基準にドットを追加していく
             firstY = hitResult.worldTransform.columns.3.y
-            /// ドットの追加
+            // ドットの追加
             addDot(at: hitResult, color: .systemOrange, y: firstY)
             
-            /// 2次元座標の追加
+            // 2次元座標の追加
             let x = dotNodes[dotNodes.count-1].position.x
             let z = dotNodes[dotNodes.count-1].position.z
             plotArray.append([x,z])
+            
         } else {
-            /// ドットの追加
+            // ドットの追加
             addDot(at: hitResult, color: .white, y: firstY)
             
-            /// 2次元座標の生成
+            // 2次元座標の追加
             let x = dotNodes[dotNodes.count-1].position.x
             let z = dotNodes[dotNodes.count-1].position.z
             plotArray.append([x,z])
             
-            /// オレンジ色の一番最初のドットオブジェクト
+            // オレンジ色の一番最初のドットオブジェクト
             let startObject = dotNodes[0]
-            /// 最後に追加したドットオブジェクト
+            // 最後に追加したドットオブジェクト
             let endObject = dotNodes[dotNodes.count-1]
-            /// ひとつ前のオブジェクトの座標
+            // ひとつ前のオブジェクトの座標
             let fromObject = dotNodes[dotNodes.count-2]
             
             // ラインの追加
             addLine(from: fromObject, to: endObject)
             
-            // lineの長さを配列に格納
+            // オブジェクト間距離の文字列の追加　メートル表記
             let length = calculateDistance(from: fromObject, to: endObject)
-            lineLength.append(length)
-            
-            // 距離文字列の追加
-            // distance メートル
             let distance = floor(abs(length)*1000)/1000
-            addDistance(text: "\(distance)m", from: fromObject, to: endObject)
+            addTextNode(text: "\(distance)m", from: fromObject, to: endObject)
             distanceArray.append(distance)
             
             /* もしスタートオブジェクトと重なれば、終了 */
             if objectsAreTouched(start: startObject, end: endObject) {
                 // 最後のlineのエンドオブジェクトをスタートオブジェクトに置き換えて更新
                 let updateLastLength = calculateDistance(from: fromObject, to: startObject)
-                lineLength[lineLength.count-1] = updateLastLength
+                distanceArray[distanceArray.count-1] = updateLastLength
                 // 重なった配列末尾を削除
                 plotArray.removeLast()
-                
-                print("finish")
                 // モーダルで画面遷移
                 performSegue(withIdentifier: "RoomPopup", sender: self)
             }
@@ -136,7 +134,6 @@ final class ViewController: UIViewController {
         textNodes.removeLast()
         distanceArray.removeLast()
     }
-    
     
     // MARK: - Methods
     private func addLine(from: SCNNode, to: SCNNode) {
@@ -182,7 +179,7 @@ final class ViewController: UIViewController {
         dotNodes.append(dotNode)
     }
     
-    private func addDistance(text: String, from: SCNNode, to: SCNNode){
+    private func addTextNode(text: String, from: SCNNode, to: SCNNode){
         // textGeometryの生成
         let textGeometry = SCNText(string: text, extrusionDepth: 1.0)
         textGeometry.firstMaterial?.diffuse.contents = UIColor.red
@@ -206,20 +203,17 @@ final class ViewController: UIViewController {
     
     private func calculateDistance(from: SCNNode, to: SCNNode) -> Float {
         let distance = sqrt(
-            pow(to.position.x - from.position.x, 2) +
+                pow(to.position.x - from.position.x, 2) +
                 pow(to.position.y - from.position.y, 2) +
                 pow(to.position.z - from.position.z, 2)
         )
-        //        distance = √ ((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2)
         return distance
     }
     
     private func objectsAreTouched(start: SCNNode, end: SCNNode) -> Bool {
         let distance = calculateDistance(from: start, to: end)
         // 2点間の距離が(直径*1.2）以下になったら
-        if distance <= (dotRadius*2)*1.2 {
-            return true
-        }
+        if distance <= (dotRadius*2)*1.2 { return true }
         return false
     }
     
@@ -231,13 +225,10 @@ final class ViewController: UIViewController {
             roomImageViewController.distanceArray = distanceArray
         }
     }
-    
 }
 
-
 // MARK: - ARSCNViewDelegate
-
-extension ViewController: ARSCNViewDelegate {
+extension ARViewController: ARSCNViewDelegate {
     
     // 平面の表示
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
@@ -277,7 +268,6 @@ extension ViewController: ARSCNViewDelegate {
         planeGeometry.width = CGFloat(planeAnchor.extent.x)
         planeGeometry.height = CGFloat(planeAnchor.extent.z)
         geometryPlaneNode.simdPosition = SIMD3(planeAnchor.center.x, 0, planeAnchor.center.z)
-        
     }
     
     // 平面の生成
@@ -297,5 +287,4 @@ extension ViewController: ARSCNViewDelegate {
         
         return planeNode
     }
-    
 }
