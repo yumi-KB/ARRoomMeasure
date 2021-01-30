@@ -7,6 +7,8 @@ final class ARViewController: UIViewController {
     /// ARを表示するビュー
     @IBOutlet var sceneView: ARSCNView!
     
+    var showModal: Bool = false
+    
     var coverView: UIView!
     /// ドット半径
     let dotRadius: Float = 0.02
@@ -38,11 +40,16 @@ final class ARViewController: UIViewController {
         configuration.planeDetection = .horizontal
         // セッションの開始
         sceneView.session.run(configuration)
+        
+        // 再読み込み時にモーダル表示のフラグをfalseにする
+        showModal = false
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // ドット上限を20個に指定
         if dotNodes.count >= 20 { return }
+        // モーダルビューが開いている場合に、タッチを非検出にする
+        if showModal == true { return }
         // 最初にタップした座標を取り出す
         guard let touch = touches.first else { return }
         // スクリーン座標に変換する
@@ -97,6 +104,8 @@ final class ARViewController: UIViewController {
                 distanceArray[distanceArray.count-1] = updateLastLength
                 // 重なった配列末尾を削除
                 plotArray.removeLast()
+                // フラグを真にする
+                showModal = true
                 // モーダルで画面遷移
                 performSegue(withIdentifier: "RoomPopup", sender: self)
             }

@@ -11,7 +11,7 @@
         <!--View Controller-->
         <scene sceneID="tXr-a1-R10">
             <objects>
-                <viewController id="BV1-FR-VrT" customClass="ARViewController" customModule="ARRoomMeasure" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController restorationIdentifier="ARViewController" storyboardIdentifier="ARViewController" id="BV1-FR-VrT" customClass="ARViewController" customModule="ARRoomMeasure" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="U0K-SW-4ec">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -51,7 +51,7 @@
                     <navigationItem key="navigationItem" id="J88-b0-TWG"/>
                     <connections>
                         <outlet property="sceneView" destination="BrB-h1-WRS" id="5nT-qQ-ynl"/>
-                        <segue destination="tAt-Pk-Ybs" kind="presentation" identifier="RoomPopup" id="tIF-Qx-VQH"/>
+                        <segue destination="tAt-Pk-Ybs" kind="presentation" identifier="RoomPopup" modalPresentationStyle="fullScreen" id="tIF-Qx-VQH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
@@ -61,13 +61,13 @@
         <!--Room Image View Controller-->
         <scene sceneID="Utb-Nh-x49">
             <objects>
-                <viewController id="tAt-Pk-Ybs" customClass="RoomImageViewController" customModule="ARRoomMeasure" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController restorationIdentifier="RoomImageViewController" storyboardIdentifier="RoomImageViewController" id="tAt-Pk-Ybs" customClass="RoomImageViewController" customModule="ARRoomMeasure" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="o8a-sK-3Yq">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CjQ-7k-0xa">
-                                <rect key="frame" x="15" y="17" width="50" height="45.5"/>
+                                <rect key="frame" x="15" y="61" width="50" height="45.5"/>
                                 <color key="backgroundColor" systemColor="systemGray2Color"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="UQM-86-0qS"/>
