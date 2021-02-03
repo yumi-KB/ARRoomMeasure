@@ -24,13 +24,13 @@ final class RoomImageViewController: UIViewController {
     }
     
     override func viewWillLayoutSubviews() {
-        // 間取り図Viewの生成
+        /// 間取り図Viewの生成
         let drawRoom = makeRoomView()
         // viewで配列変数を使えるようにする
         drawRoom.setPlotArray(plotArray)
         drawRoom.setDistanceArray(distanceArray)
         
-        // 間取り図imageViewに変換
+        /// 間取り図imageViewに変換
         let roomImageView = makeRoomImageView(view: drawRoom)
         
         // UIImageView にタップイベントを追加
@@ -49,17 +49,17 @@ final class RoomImageViewController: UIViewController {
         let viewWidth = view.bounds.width - CGFloat(2.0 * constraint)
         let viewHeight = view.bounds.height - CGFloat(2.0 * constraint + (buttonSize+constraint)+constraint)
         
-        // UIViewを継承したDrawRoomクラスのインスタンスを生成
+        /// UIViewを継承したDrawRoomクラスのインスタンスを生成
         let drawRoom = DrawRoom(frame: CGRect(
                                     x: x,
                                     y: y,
                                     width: viewWidth,
                                     height: viewHeight))
-        drawRoom.backgroundColor = UIColor.red
         return drawRoom
     }
     
     private func makeRoomImageView(view drawRoom: UIView) -> UIImageView {
+        /// UIViewからUIImageViewに変換
         let image = drawRoom.convertToImage()
         let roomImageView = UIImageView(image: image)
         
@@ -68,6 +68,7 @@ final class RoomImageViewController: UIViewController {
         let y = CGFloat(constraint+(buttonSize+constraint)+constraint)
         let viewWidth = view.bounds.width - CGFloat(2.0 * constraint)
         let viewHeight = view.bounds.height - CGFloat(2.0 * constraint + (buttonSize+constraint)+constraint)
+        
         roomImageView.frame = CGRect(
             x: x,
             y: y,
@@ -78,18 +79,18 @@ final class RoomImageViewController: UIViewController {
     }
     
     @objc func saveImage(_ sender: UITapGestureRecognizer) {
-        // タップしたUIImageViewを取得
+        /// タップしたUIImageViewを取得
         let targetImageView = sender.view! as! UIImageView
-        // その中の UIImage を取得
+        /// その中の UIImage を取得
         let targetImage = targetImageView.image!
-        // 保存するか否かのアラート
+        /// 保存するか否かのアラート
         let alertController = UIAlertController(title: "保存", message: "この画像を保存しますか？", preferredStyle: .alert)
-        // OK
+        /// OK
         let okAction = UIAlertAction(title: "OK", style: .default) { (ok) in
             // フォトライブラリに画像を保存
             UIImageWriteToSavedPhotosAlbum(targetImage, self, #selector(self.showResultOfSaveImage(_:didFinishSavingWithError:contextInfo:)), nil)
         }
-        // CANCEL
+        /// CANCEL
         let cancelAction = UIAlertAction(title: "CANCEL", style: .default) { (cancel) in
             alertController.dismiss(animated: true, completion: nil)
         }

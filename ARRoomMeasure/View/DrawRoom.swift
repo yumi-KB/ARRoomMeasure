@@ -8,11 +8,14 @@
 import UIKit
 
 final class DrawRoom: UIView {
-    
+    /// オブジェクト間の制約
     let constraint = 15.0
+    /// ボタンのサイズを表す変数
     let buttonSize = 50.0
     
+    /// オブジェクトの2次元座票を記録
     private var plotArray: [[Float]] = []
+    /// オブジェクト間の測定した距離を記録
     private var distanceArray: [Float] = []
     
     override init(frame: CGRect) {
@@ -41,7 +44,9 @@ final class DrawRoom: UIView {
         // 間取り図を描画
         drawRoomLine(line)
         
-        /* translation 最小値Yを持つ座標を原点に移すように図形全体を平行移動 */
+        
+        /* translation
+         * 最小値Yを持つ座標を原点に移すように図形全体を平行移動 */
         // Yについての最小値を持つ配列のインデックスを記録
         let minYIndex = getMinYIndex(array: plotArray)
         // Yの最小値を持つ座標を原点に、図形全体を平行移動
@@ -54,7 +59,9 @@ final class DrawRoom: UIView {
         var transArray = transPlot(transX: transX, transY: transY, array: plotArray)
         /* */
         
-        /* rotate 原点を中心に回転 */
+        
+        /* rotate
+         * 原点を中心に回転 */
         var angle: Float!
         var before: Int = 0
         if minYIndex == 0 {
@@ -80,32 +87,40 @@ final class DrawRoom: UIView {
         
         // rotate plot
         let rotateArray = rotatePlot(angle: angle, array: transArray)
-        print("ra: \(rotateArray)")
         
         //　回転後の図形の幅と高さを求める
         let rotateBezierWidth = getBezierWidth(array: rotateArray)
         let rotateBezierHeight = getBezierHeight(array: rotateArray)
         /* */
         
-        // 初期位置に戻す
+        
+        /* translation
+         * 初期位置に戻す */
         transX = plotArray[minYIndex][0]
         transY = plotArray[minYIndex][1]
         translation = CGAffineTransform(translationX: CGFloat(transX), y: CGFloat(transY))
         line.apply(translation)
         transArray = transPlot(transX: -transX, transY: -transY, array: rotateArray)
+        /* */
         
-        // 正の座標上に図形を平行移動
+        
+        /* translation
+         * 正の座標上に図形を平行移動 */
         let minXIndex = getMinXIndex(array: rotateArray)
         transX = transArray[minXIndex][0]
         transY = transArray[minYIndex][1]
         translation = CGAffineTransform(translationX: CGFloat(transX), y: CGFloat(transY)).inverted()
         line.apply(translation)
         transArray = transPlot(transX: transX, transY: transY, array: transArray)
+        /* */
+        
         
         // 面積の計算
         let area = getArea(rotateArray)
         
-        /* scare Viewの大きさに合わせて拡大 */
+        
+        /* scare
+         * Viewの大きさに合わせて拡大 */
         let scaleX = (Float(self.bounds.width) - Float(2.0 * constraint)) / rotateBezierWidth
         let scaleY = (Float(self.bounds.height) - Float(2.0 * constraint + buttonSize + constraint + constraint)) / rotateBezierHeight
         var scale: Float!
@@ -127,22 +142,28 @@ final class DrawRoom: UIView {
         let scaleBezierHeight = getBezierHeight(array: scaleArray)
         /* */
         
-        // viewの中心に図形を平行移動
+        
+        /* translation
+         * viewの中心に図形を平行移動 */
         let centerView = [self.bounds.width / 2, self.bounds.height / 2]
-        print("centerView: \(centerView)")
         let centerBezier = [scaleBezierWidth / 2, scaleBezierHeight / 2]
         var resultArray: [[Float]] = []
         
         if scaleBezierWidth < scaleBezierHeight {
             transX = Float(centerView[0]) - centerBezier[0]
-            translation = CGAffineTransform(translationX: CGFloat(transX), y: CGFloat(0))
-            resultArray = transPlot(transX: -transX, transY: 0, array: scaleArray)
-        } else {
             transY = Float(centerView[1]) - centerBezier[1]
-            translation = CGAffineTransform(translationX: CGFloat(0), y: CGFloat(transY))
-            resultArray = transPlot(transX: 0, transY: -transY, array: scaleArray)
+            translation = CGAffineTransform(translationX: CGFloat(transX), y: CGFloat(transY))
+            
+            resultArray = transPlot(transX: -transX, transY: -transY, array: scaleArray)
+        } else {
+            transX = Float(centerView[0]) - centerBezier[0]
+            transY = Float(centerView[1]) - centerBezier[1]
+            translation = CGAffineTransform(translationX: CGFloat(transX), y: CGFloat(transY))
+            
+            resultArray = transPlot(transX: -transX, transY: -transY, array: scaleArray)
         }
         line.apply(translation)
+        /* */
         
         
         // 描画
@@ -152,6 +173,7 @@ final class DrawRoom: UIView {
         /* add distance label */
         var label = UILabel()
         let labelWidth = 100
+        let labelHeight = 40
         
         for i in 0..<resultArray.count {
             label = UILabel()
@@ -163,19 +185,19 @@ final class DrawRoom: UIView {
                 let halfX: Float = (resultArray[i+1][0] + resultArray[i][0]) / 2.0
                 let halfY: Float = (resultArray[i+1][1] + resultArray[i][1]) / 2.0
                 x = halfX - (Float(labelWidth) / 2.0)
-                y = halfY
+                y = halfY - (Float(labelHeight) / 2.0)
                 
             } else {
                 let halfX: Float = (resultArray[0][0] + resultArray[i][0]) / 2.0
                 let halfY: Float = (resultArray[0][1] + resultArray[i][1]) / 2.0
                 x = halfX - (Float(labelWidth) / 2.0)
-                y = halfY
+                y = halfY - (Float(labelHeight) / 2.0)
             }
             
             label.frame = CGRect(x: CGFloat(x),
                                  y: CGFloat(y),
                                  width: CGFloat(labelWidth),
-                                 height: 40)
+                                 height: CGFloat(labelHeight ))
             
             label.textAlignment = NSTextAlignment.center
             label.numberOfLines = 1
@@ -184,6 +206,7 @@ final class DrawRoom: UIView {
             self.addSubview(label) //labelを表示
         }
         /* */
+        
         
         /* add area label */
         let areaM2 = String(floor(area*100)/100) + "m2"
@@ -198,6 +221,8 @@ final class DrawRoom: UIView {
         
         let centerX = self.bounds.width / 2 - areaLabel.frame.width / 2
         let centerY = self.bounds.height / 2 - areaLabel.frame.height / 2
+        print("centerX: \(centerX)")
+        print("centerY: \(centerY)")
         areaLabel.frame = CGRect(x: centerX,
                                  y: centerY,
                                  width: areaLabel.frame.width,
@@ -219,7 +244,6 @@ final class DrawRoom: UIView {
         for i in 1 ..< plotArray.count {
             let x = CGFloat((plotArray[i][0]))
             let y = CGFloat((plotArray[i][1]))
-            print("x:\(x), y:\(y)")
             line.addLine(to: CGPoint(x: x, y: y))
         }
         // 視点と終点を結ぶ
@@ -234,10 +258,6 @@ final class DrawRoom: UIView {
         // XとY座標の最小値
         let minX = array.map { $0[0] }.min() ?? 0.0
         let minY = array.map { $0[1] }.min() ?? 0.0
-        /* 最大値
-         let maxX = array.map { $0[0] }.max() ?? 0.0
-         let maxY = array.map { $0[1] }.max() ?? 0.0
-         */
         // XとY座標の最小値を持つ配列番号
         var minXIndex = 0
         var minYIndex = 0
@@ -245,9 +265,6 @@ final class DrawRoom: UIView {
             if array[i][0] == minX {
                 minXIndex = i
             }
-            /* if array[i][1] == minY {
-             minYIndex = i
-             }*/
         }
         return minXIndex
     }
@@ -256,17 +273,10 @@ final class DrawRoom: UIView {
         // XとY座標の最小値
         let minX = array.map { $0[0] }.min() ?? 0.0
         let minY = array.map { $0[1] }.min() ?? 0.0
-        /* 最大値
-         let maxX = array.map { $0[0] }.max() ?? 0.0
-         let maxY = array.map { $0[1] }.max() ?? 0.0
-         */
         // XとY座標の最小値を持つ配列番号
         var minXIndex = 0
         var minYIndex = 0
         for (i, value) in array.enumerated() {
-            /* if array[i][0] == minX {
-             minXIndex = i
-             }*/
             if array[i][1] == minY {
                 minYIndex = i
             }
