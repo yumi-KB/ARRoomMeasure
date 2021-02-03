@@ -177,7 +177,7 @@ final class DrawRoom: UIView {
         
         for i in 0..<resultArray.count {
             label = UILabel()
-            label.backgroundColor = UIColor(white: 1, alpha: 0.95)
+            label.backgroundColor = UIColor(white: 1, alpha: 0.75)
             
             var x: Float = 0.0
             var y: Float = 0.0
@@ -221,8 +221,6 @@ final class DrawRoom: UIView {
         
         let centerX = self.bounds.width / 2 - areaLabel.frame.width / 2
         let centerY = self.bounds.height / 2 - areaLabel.frame.height / 2
-        print("centerX: \(centerX)")
-        print("centerY: \(centerY)")
         areaLabel.frame = CGRect(x: centerX,
                                  y: centerY,
                                  width: areaLabel.frame.width,

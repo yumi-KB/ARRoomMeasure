@@ -41,15 +41,22 @@ final class ARViewController: UIViewController {
         // セッションの開始
         sceneView.session.run(configuration)
         
-        // 再読み込み時にモーダル表示のフラグをfalseにする
-        showModal = false
+        // ARViewの再読み込み時にカバービューを非表示にする
+        if coverView != nil {
+            coverView.isHidden = true
+        }
+        debugPrint(coverView)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // ドット上限を20個に指定
         if dotNodes.count >= 20 { return }
-        // モーダルビューが開いている場合に、タッチを非検出にする
-        if showModal == true { return }
+        debugPrint("touch")
+        debugPrint(coverView)
+        // モーダルビューが開いている場合に、カバービューを配置してタッチを不可にする
+        if coverView != nil {
+            if coverView.isHidden == false { return }
+        }
         // 最初にタップした座標を取り出す
         guard let touch = touches.first else { return }
         // スクリーン座標に変換する
@@ -102,10 +109,15 @@ final class ARViewController: UIViewController {
                 // 最後のlineのエンドオブジェクトをスタートオブジェクトに置き換えて更新
                 let updateLastLength = calculateDistance(from: fromObject, to: startObject)
                 distanceArray[distanceArray.count-1] = updateLastLength
-                // 重なった配列末尾を削除
-                plotArray.removeLast()
-                // フラグを真にする
-                showModal = true
+                debugPrint(coverView)
+                // カバービューを表示
+                if coverView == nil {
+                    coverView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
+                    coverView.isUserInteractionEnabled = true
+                    view.addSubview(coverView)
+                }
+                coverView.isHidden = false
+                debugPrint(coverView)
                 // モーダルで画面遷移
                 performSegue(withIdentifier: "RoomPopup", sender: self)
             }
@@ -230,8 +242,10 @@ final class ARViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "RoomPopup" {
             let roomImageViewController = segue.destination as! RoomImageViewController
-            roomImageViewController.plotArray = plotArray
             roomImageViewController.distanceArray = distanceArray
+            roomImageViewController.plotArray = plotArray
+            // 重なった配列末尾を削除
+            roomImageViewController.plotArray.removeLast()
         }
     }
 }
