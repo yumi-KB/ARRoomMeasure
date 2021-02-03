@@ -9,21 +9,27 @@
 /* Begin PBXBuildFile section */
 		4B1C919225AFE6340088F423 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C919125AFE6340088F423 /* AppDelegate.swift */; };
 		4B1C919425AFE6340088F423 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B1C919325AFE6340088F423 /* art.scnassets */; };
-		4B1C919625AFE6340088F423 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C919525AFE6340088F423 /* ViewController.swift */; };
+		4B1C919625AFE6340088F423 /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C919525AFE6340088F423 /* ARViewController.swift */; };
 		4B1C919925AFE6340088F423 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B1C919725AFE6340088F423 /* Main.storyboard */; };
 		4B1C919B25AFE6370088F423 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B1C919A25AFE6370088F423 /* Assets.xcassets */; };
 		4B1C919E25AFE6370088F423 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B1C919C25AFE6370088F423 /* LaunchScreen.storyboard */; };
+		4B1C91AE25B2D0490088F423 /* RoomImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C91AD25B2D0480088F423 /* RoomImageViewController.swift */; };
+		4B1C91B825B3D8360088F423 /* DrawRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C91B725B3D8360088F423 /* DrawRoom.swift */; };
+		4BD4DA2F25BFA3ED0076587E /* UIView+ConvertToImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD4DA2E25BFA3EC0076587E /* UIView+ConvertToImage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		4B1C918E25AFE6340088F423 /* ARRoomMeasure.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARRoomMeasure.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B1C919125AFE6340088F423 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4B1C919325AFE6340088F423 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
-		4B1C919525AFE6340088F423 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		4B1C919525AFE6340088F423 /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
 		4B1C919825AFE6340088F423 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4B1C919A25AFE6370088F423 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4B1C919D25AFE6370088F423 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4B1C919F25AFE6370088F423 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B1C91AD25B2D0480088F423 /* RoomImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomImageViewController.swift; sourceTree = "<group>"; };
+		4B1C91B725B3D8360088F423 /* DrawRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawRoom.swift; sourceTree = "<group>"; };
+		4BD4DA2E25BFA3EC0076587E /* UIView+ConvertToImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ConvertToImage.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,14 +63,41 @@
 			isa = PBXGroup;
 			children = (
 				4B1C919125AFE6340088F423 /* AppDelegate.swift */,
-				4B1C919325AFE6340088F423 /* art.scnassets */,
-				4B1C919525AFE6340088F423 /* ViewController.swift */,
 				4B1C919725AFE6340088F423 /* Main.storyboard */,
+				4BD4DA3425BFA6C40076587E /* ViewController */,
+				4BD4DA3325BFA6BF0076587E /* View */,
+				4BD4DA3125BFA67D0076587E /* UIView */,
 				4B1C919A25AFE6370088F423 /* Assets.xcassets */,
+				4B1C919325AFE6340088F423 /* art.scnassets */,
 				4B1C919C25AFE6370088F423 /* LaunchScreen.storyboard */,
 				4B1C919F25AFE6370088F423 /* Info.plist */,
 			);
 			path = ARRoomMeasure;
+			sourceTree = "<group>";
+		};
+		4BD4DA3125BFA67D0076587E /* UIView */ = {
+			isa = PBXGroup;
+			children = (
+				4BD4DA2E25BFA3EC0076587E /* UIView+ConvertToImage.swift */,
+			);
+			path = UIView;
+			sourceTree = "<group>";
+		};
+		4BD4DA3325BFA6BF0076587E /* View */ = {
+			isa = PBXGroup;
+			children = (
+				4B1C91B725B3D8360088F423 /* DrawRoom.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		4BD4DA3425BFA6C40076587E /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				4B1C919525AFE6340088F423 /* ARViewController.swift */,
+				4B1C91AD25B2D0480088F423 /* RoomImageViewController.swift */,
+			);
+			path = ViewController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -138,7 +171,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B1C919625AFE6340088F423 /* ViewController.swift in Sources */,
+				4B1C91B825B3D8360088F423 /* DrawRoom.swift in Sources */,
+				4BD4DA2F25BFA3ED0076587E /* UIView+ConvertToImage.swift in Sources */,
+				4B1C919625AFE6340088F423 /* ARViewController.swift in Sources */,
+				4B1C91AE25B2D0490088F423 /* RoomImageViewController.swift in Sources */,
 				4B1C919225AFE6340088F423 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -216,7 +252,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -271,7 +307,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -287,6 +323,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = B47X5TXYY6;
 				INFOPLIST_FILE = ARRoomMeasure/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -295,7 +332,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "yumi-KB.ARRoomMeasure";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -305,6 +342,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = B47X5TXYY6;
 				INFOPLIST_FILE = ARRoomMeasure/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -313,7 +351,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "yumi-KB.ARRoomMeasure";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
