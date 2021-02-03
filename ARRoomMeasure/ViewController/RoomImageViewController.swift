@@ -43,16 +43,19 @@ final class RoomImageViewController: UIViewController {
     
     // MARK: - Methods
     private func makeRoomView() -> DrawRoom {
+        /// 間取り図viewの座標とサイズの設定
         let x = CGFloat(constraint)
-        let y = CGFloat(constraint+(constraint+buttonSize))
+        let y = CGFloat(constraint+(buttonSize+constraint)+constraint)
         let viewWidth = view.bounds.width - CGFloat(2.0 * constraint)
-        let viewHeight = view.bounds.height - CGFloat(2.0 * constraint + (constraint + buttonSize))
+        let viewHeight = view.bounds.height - CGFloat(2.0 * constraint + (buttonSize+constraint)+constraint)
         
+        // UIViewを継承したDrawRoomクラスのインスタンスを生成
         let drawRoom = DrawRoom(frame: CGRect(
                                     x: x,
                                     y: y,
                                     width: viewWidth,
                                     height: viewHeight))
+        drawRoom.backgroundColor = UIColor.red
         return drawRoom
     }
     
@@ -60,10 +63,11 @@ final class RoomImageViewController: UIViewController {
         let image = drawRoom.convertToImage()
         let roomImageView = UIImageView(image: image)
         
+        /// 間取り図imageViewの座標とサイズの設定
         let x = CGFloat(constraint)
-        let y = CGFloat(constraint+(constraint+buttonSize))
+        let y = CGFloat(constraint+(buttonSize+constraint)+constraint)
         let viewWidth = view.bounds.width - CGFloat(2.0 * constraint)
-        let viewHeight = view.bounds.height - CGFloat(2.0 * constraint + (constraint + buttonSize))
+        let viewHeight = view.bounds.height - CGFloat(2.0 * constraint + (buttonSize+constraint)+constraint)
         roomImageView.frame = CGRect(
             x: x,
             y: y,

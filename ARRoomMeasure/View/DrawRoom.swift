@@ -107,7 +107,7 @@ final class DrawRoom: UIView {
         
         /* scare Viewの大きさに合わせて拡大 */
         let scaleX = (Float(self.bounds.width) - Float(2.0 * constraint)) / rotateBezierWidth
-        let scaleY = (Float(self.bounds.height) - Float(2.0 * constraint + buttonSize + constraint)) / rotateBezierHeight
+        let scaleY = (Float(self.bounds.height) - Float(2.0 * constraint + buttonSize + constraint + constraint)) / rotateBezierHeight
         var scale: Float!
         var scaleTransform: CGAffineTransform!
         if scaleX < scaleY {
